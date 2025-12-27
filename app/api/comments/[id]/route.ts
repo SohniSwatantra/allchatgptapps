@@ -53,11 +53,13 @@ export const DELETE = async (
 
     await db.delete(comments).where(eq(comments.id, validation.data.id));
 
-    // Decrement post comment count
-    await db
-      .update(posts)
-      .set({ commentsCount: sql`${posts.commentsCount} - 1` })
-      .where(eq(posts.id, existingComment.postId));
+    // Decrement post comment count if comment was linked to a post
+    if (existingComment.postId != null) {
+      await db
+        .update(posts)
+        .set({ commentsCount: sql`${posts.commentsCount} - 1` })
+        .where(eq(posts.id, existingComment.postId));
+    }
 
     return successResponse({ data: { deleted: true } });
   } catch (error) {
