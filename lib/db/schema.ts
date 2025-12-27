@@ -6,6 +6,7 @@ export const users = pgTable('users', {
   email: varchar('email', { length: 255 }).notNull().unique(),
   name: varchar('name', { length: 255 }),
   avatarUrl: text('avatar_url'),
+  neonAuthId: varchar('neon_auth_id', { length: 255 }).unique(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
 });
@@ -54,6 +55,14 @@ export const comments = pgTable('comments', {
   userId: integer('user_id').references(() => users.id).notNull(),
   postId: integer('post_id').references(() => posts.id),
   productId: integer('product_id').references(() => products.id),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+// Likes tracking for posts
+export const likes = pgTable('likes', {
+  id: serial('id').primaryKey(),
+  userId: integer('user_id').references(() => users.id).notNull(),
+  postId: integer('post_id').references(() => posts.id).notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
