@@ -5,7 +5,7 @@ import { productQuerySchema, createProductSchema } from '@/lib/schemas/products'
 import { successResponse, errorResponse, paginatedResponse } from '@/lib/api/response';
 import { ApiErrors } from '@/lib/api/errors';
 import { getAuthUser } from '@/lib/auth/getUser';
-import { eq, desc, asc, gte, and, sql } from 'drizzle-orm';
+import { eq, desc, asc, gte, and, sql, SQL } from 'drizzle-orm';
 
 const getTimeRangeDate = ({ timeRange }: { timeRange: string }): Date => {
   const now = new Date();
@@ -39,7 +39,7 @@ export const GET = async (request: NextRequest) => {
     const { page, limit, timeRange, category, sortBy, sortOrder, isApproved } = validation.data;
     const offset = (page - 1) * limit;
 
-    const conditions = [];
+    const conditions: SQL<unknown>[] = [];
 
     if (timeRange) {
       conditions.push(gte(products.createdAt, getTimeRangeDate({ timeRange })));
