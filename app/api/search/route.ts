@@ -3,7 +3,7 @@ import { db } from '@/lib/db';
 import { products } from '@/lib/db/schema';
 import { successResponse, errorResponse, paginatedResponse } from '@/lib/api/response';
 import { ApiErrors } from '@/lib/api/errors';
-import { ilike, or, and, eq, sql, desc } from 'drizzle-orm';
+import { ilike, or, and, eq, sql, desc, SQL } from 'drizzle-orm';
 import { z } from 'zod';
 
 const searchQuerySchema = z.object({
@@ -31,12 +31,12 @@ export const GET = async (request: NextRequest) => {
 
     const searchPattern = `%${q}%`;
 
-    const conditions = [
+    const conditions: (SQL<unknown> | undefined)[] = [
       eq(products.isApproved, true),
       or(
         ilike(products.name, searchPattern),
         ilike(products.description, searchPattern),
-        ilike(products.tagline, searchPattern)
+        ilike(products.shortDescription, searchPattern)
       ),
     ];
 
